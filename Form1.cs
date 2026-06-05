@@ -43,33 +43,47 @@ namespace Film_library
         /// <summary>
         /// Програмне створення та розміщення елементів інтерфейсу на формі.
         /// </summary>
+        /// <summary>
+        /// Програмне створення та розміщення елементів інтерфейсу на формі.
+        /// </summary>
         private void InitializeCustomComponents()
         {
-            // Панель фільтрації (Верхня частина)
-            var pnlFilter = new Panel { Dock = DockStyle.Top, Height = 70, BorderStyle = BorderStyle.FixedSingle };
+            // Очищаємо абсолютно всі старі елементи з дизайнера, 
+            // щоб вони не накладалися на наш новий код і не ховали таблицю з даними!
+            this.Controls.Clear();
 
-            var lblTitle = new Label { Text = "Назва:", Left = 10, Top = 12, Width = 50 };
-            _txtSearchTitle = new TextBox { Left = 65, Top = 10, Width = 150 };
+            // --- Панель фільтрації (Верхня частина) ---
+            var pnlFilter = new Panel
+            {
+                Dock = DockStyle.Top,
+                Height = 75,
+                BorderStyle = BorderStyle.FixedSingle
+            };
 
-            var lblGenre = new Label { Text = "Жанр:", Left = 230, Top = 12, Width = 50 };
-            _cmbFilterGenre = new ComboBox { Left = 285, Top = 10, Width = 120, DropDownStyle = ComboBoxStyle.DropDownList };
+            // Вмикаємо AutoSize = true, щоб текст ніколи не обрізався через масштабування еккрана
+            var lblTitle = new Label { Text = "Назва:", Left = 15, Top = 28, AutoSize = true };
+            _txtSearchTitle = new TextBox { Left = 70, Top = 24, Width = 140, Height = 27 };
 
-            var lblDirector = new Label { Text = "Режисер:", Left = 420, Top = 12, Width = 65 };
-            _cmbFilterDirector = new ComboBox { Left = 490, Top = 10, Width = 150, DropDownStyle = ComboBoxStyle.DropDownList };
+            var lblGenre = new Label { Text = "Жанр:", Left = 230, Top = 28, AutoSize = true };
+            _cmbFilterGenre = new ComboBox { Left = 280, Top = 24, Width = 130, Height = 27, DropDownStyle = ComboBoxStyle.DropDownList };
 
-            _btnSearch = new Button { Text = "Пошук", Left = 660, Top = 8, Width = 100 };
-            _btnReset = new Button { Text = "Скинути", Left = 770, Top = 8, Width = 100 };
+            var lblDirector = new Label { Text = "Режисер:", Left = 430, Top = 28, AutoSize = true };
+            _cmbFilterDirector = new ComboBox { Left = 505, Top = 24, Width = 150, Height = 27, DropDownStyle = ComboBoxStyle.DropDownList };
+
+            // Задаємо чітку висоту (Height = 32) для кнопок, щоб текст не вилазив за межі
+            _btnSearch = new Button { Text = "Пошук", Left = 675, Top = 20, Width = 95, Height = 32 };
+            _btnReset = new Button { Text = "Скинути", Left = 780, Top = 20, Width = 95, Height = 32 };
 
             _btnSearch.Click += BtnSearch_Click;
             _btnReset.Click += BtnReset_Click;
 
             pnlFilter.Controls.AddRange(new Control[] { lblTitle, _txtSearchTitle, lblGenre, _cmbFilterGenre, lblDirector, _cmbFilterDirector, _btnSearch, _btnReset });
 
-            // Панель дій (Нижня частина з кнопками)
-            var pnlActions = new Panel { Dock = DockStyle.Bottom, Height = 60 };
-            _btnAdd = new Button { Text = "Додати фільм", Left = 10, Top = 15, Width = 130, Height = 30 };
-            _btnEdit = new Button { Text = "Редагувати", Left = 150, Top = 15, Width = 110, Height = 30 };
-            _btnDelete = new Button { Text = "Видалити", Left = 270, Top = 15, Width = 110, Height = 30 };
+            // --- Панель дій (Нижня частина з кнопками) ---
+            var pnlActions = new Panel { Dock = DockStyle.Bottom, Height = 65 };
+            _btnAdd = new Button { Text = "Додати фільм", Left = 15, Top = 15, Width = 140, Height = 35 };
+            _btnEdit = new Button { Text = "Редагувати", Left = 165, Top = 15, Width = 120, Height = 35 };
+            _btnDelete = new Button { Text = "Видалити", Left = 295, Top = 15, Width = 120, Height = 35 };
 
             _btnAdd.Click += BtnAdd_Click;
             _btnEdit.Click += BtnEdit_Click;
@@ -77,7 +91,7 @@ namespace Film_library
 
             pnlActions.Controls.AddRange(new Control[] { _btnAdd, _btnEdit, _btnDelete });
 
-            // Таблиця відображення фільмів (Центр)
+            // --- Таблиця відображення даних (Центр) ---
             _dataGridView = new DataGridView
             {
                 Dock = DockStyle.Fill,
@@ -88,12 +102,12 @@ namespace Film_library
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
             };
 
-            // Додаємо всі створені панелі на головну форму
+            // Додаємо елементи на головне вікно в строгому порядку шарів
             this.Controls.Add(_dataGridView);
             this.Controls.Add(pnlFilter);
             this.Controls.Add(pnlActions);
 
-            // Підключаємо обробник гарячих клавіш
+            // Підключаємо гарячі клавіші
             this.KeyDown += Form1_KeyDown;
         }
 
