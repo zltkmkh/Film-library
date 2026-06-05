@@ -75,7 +75,9 @@ namespace Film_library
                 MultiSelect = false,
                 ReadOnly = true,
                 AllowUserToAddRows = false,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells,
+                DefaultCellStyle = new DataGridViewCellStyle { WrapMode = DataGridViewTriState.True }
             };
 
             // ЗМІНА ТУТ: Підключаємо клік на клітинку таблиці для відкриття посилань!
@@ -117,19 +119,28 @@ namespace Film_library
                 Рік = m.Year,
                 Режисер = m.MovieDirector?.ToString() ?? "Не вказано",
                 Оцінка = $"{m.Rating}/10",
-
-                // ЗМІНА ТУТ: Відображаємо тривалість замість розміру файлу
                 Тривалість = $"{m.Duration} хв",
-
                 Трейлер = m.FilePath
             }).ToList();
-        }
 
+            // НАЛАШТУВАННЯ ШИРИНИ КОЛОНОК (ПРОПОРЦІЇ ВІЗУАЛУ)
+            if (_dataGridView.Columns.Count > 0)
+            {
+                _dataGridView.Columns["Рік"].FillWeight = 55;        // Дуже вузька
+                _dataGridView.Columns["Оцінка"].FillWeight = 65;     // Вузька
+                _dataGridView.Columns["Тривалість"].FillWeight = 85;  // Вузька
+                _dataGridView.Columns["Жанр"].FillWeight = 90;       // Середня
+
+                _dataGridView.Columns["Назва"].FillWeight = 160;     // Широка
+                _dataGridView.Columns["Режисер"].FillWeight = 160;   // Широка
+                _dataGridView.Columns["Трейлер"].FillWeight = 230;   // Найширша для довгих URL
+            }
+        }
         // ДОДАЄМО НОВИЙ МЕТОД: Відкриття трейлера за кліком!
         private void DataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            // Перевіряємо, чи клікнули по реальному рядку і саме по колонці "Трейлер"
-            if (e.RowIndex >= 0 && _dataGridView.Columns[e.ColumnIndex].Name == "Трейлер")
+            // ЗМІНА ТУТ: Додали перевірку e.ColumnIndex >= 0, щоб кліки по сірих зонах не ламали програму
+            if (e.RowIndex >= 0 && e.ColumnIndex >= 0 && _dataGridView.Columns[e.ColumnIndex].Name == "Трейлер")
             {
                 string target = _dataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value?.ToString();
 
@@ -137,7 +148,6 @@ namespace Film_library
                 {
                     try
                     {
-                        // Магічний код, який запускає браузер або плеєр в залежності від того, що всередині (URL чи файл)
                         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                         {
                             FileName = target,
@@ -151,7 +161,6 @@ namespace Film_library
                 }
             }
         }
-
         private void BtnSearch_Click(object sender, EventArgs e)
         {
             var filtered = _movies.AsEnumerable();
